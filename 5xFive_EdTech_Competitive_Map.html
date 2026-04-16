@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Competitive Landscape — Personalized Learning & EdTech AI</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#ffffff;--bg2:#f7f7f5;--tx:#1a1a1a;--tx2:#6b6b6b;--tx3:#9a9a9a;
+  --bd:#e5e5e2;--bd2:#d4d4d0;
+  --t1:#534AB7;--t1bg:#EEEDFE;--t1tx:#3C3489;
+  --t2:#0F6E56;--t2bg:#E1F5EE;--t2tx:#085041;
+  --t3:#5F5E5A;--t3bg:#F1EFE8;--t3tx:#444441;
+  --ws:#D85A30;--wsbg:rgba(216,90,48,0.05);
+  --font:'DM Sans',system-ui,-apple-system,sans-serif;
+}
+@media(prefers-color-scheme:dark){
+  :root{
+    --bg:#1a1a1a;--bg2:#242422;--tx:#e8e8e4;--tx2:#9a9a96;--tx3:#6b6b68;
+    --bd:#333330;--bd2:#444440;
+    --t1:#AFA9EC;--t1bg:#2d2a4a;--t1tx:#CECBF6;
+    --t2:#5DCAA5;--t2bg:#0d3028;--t2tx:#9FE1CB;
+    --t3:#B4B2A9;--t3bg:#2c2c2a;--t3tx:#D3D1C7;
+    --ws:#F0997B;--wsbg:rgba(240,153,123,0.06);
+  }
+}
+body{font-family:var(--font);background:var(--bg);color:var(--tx);padding:24px;max-width:960px;margin:0 auto}
+.header{margin-bottom:24px}
+.header h1{font-size:18px;font-weight:600;letter-spacing:-0.3px;margin-bottom:4px}
+.header p{font-size:13px;color:var(--tx2);line-height:1.5}
+.chart-wrap{position:relative;background:var(--bg);border:0.5px solid var(--bd);border-radius:12px;padding:16px 16px 8px 16px;margin-bottom:16px}
+svg text{font-family:var(--font)}
+.tooltip{position:absolute;background:var(--bg);border:0.5px solid var(--bd2);border-radius:8px;padding:12px 16px;font-size:12px;color:var(--tx);pointer-events:none;opacity:0;transition:opacity 0.12s;max-width:280px;line-height:1.55;z-index:10;box-shadow:0 4px 12px rgba(0,0,0,0.08)}
+.tooltip .t-tier{font-size:10px;color:var(--tx3);margin-bottom:3px;text-transform:uppercase;letter-spacing:0.3px}
+.tooltip .t-name{font-weight:600;font-size:13px;margin-bottom:2px}
+.tooltip .t-desc{color:var(--tx2);margin-bottom:6px}
+.tooltip .t-cap{color:var(--tx2);font-size:11px;border-top:0.5px solid var(--bd);padding-top:6px;margin-top:2px}
+.legend{display:flex;flex-wrap:wrap;gap:16px;font-size:12px;color:var(--tx2);padding:4px 0}
+.legend span{display:flex;align-items:center;gap:6px}
+.legend i{width:10px;height:10px;border-radius:2px;display:inline-block;flex-shrink:0}
+.footer{font-size:11px;color:var(--tx3);margin-top:8px;text-align:right}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>Competitive landscape — personalized learning & EdTech AI</h1>
+  <p>18 competitors mapped by depth of learner modeling vs. commercial scale. Hover any company for detail. Dashed zone = structurally unoccupied territory.</p>
+</div>
+<div class="chart-wrap">
+  <svg id="cmap" viewBox="0 0 820 540" style="width:100%;display:block;"></svg>
+  <div class="tooltip" id="tip"></div>
+</div>
+<div class="legend">
+  <span><i style="background:var(--t1);"></i>Tier 1 — boundary players</span>
+  <span><i style="background:var(--t2);"></i>Tier 2 — established adjacent</span>
+  <span><i style="background:var(--t3);"></i>Tier 3 — narrow scope</span>
+  <span><i style="background:var(--wsbg);border:1.5px dashed var(--ws);"></i>Unoccupied territory</span>
+</div>
+<div class="footer">5xFive Competitive Intelligence Series · April 2026 · Confidential</div>
+
+<script>
+const isDk = matchMedia('(prefers-color-scheme:dark)').matches;
+const svg = document.getElementById('cmap');
+const tip = document.getElementById('tip');
+const wrap = document.querySelector('.chart-wrap');
+const pad = {t:45,r:35,b:58,l:68};
+const W=820,H=540;
+const pw=W-pad.l-pad.r, ph=H-pad.t-pad.b;
+
+const cs = getComputedStyle(document.documentElement);
+const t1c = cs.getPropertyValue('--t1').trim();
+const t2c = cs.getPropertyValue('--t2').trim();
+const t3c = cs.getPropertyValue('--t3').trim();
+const wsc = cs.getPropertyValue('--ws').trim();
+const wsbg = cs.getPropertyValue('--wsbg').trim();
+const txc = cs.getPropertyValue('--tx2').trim();
+const tx3 = cs.getPropertyValue('--tx3').trim();
+const bdc = cs.getPropertyValue('--bd').trim();
+
+const tierC = {1:t1c, 2:t2c, 3:t3c};
+const tierNames = {1:'Tier 1 — boundary player',2:'Tier 2 — established adjacent',3:'Tier 3 — narrow scope'};
+
+const data = [
+  {name:'Ahura AI',tier:1,x:55,y:12,r:9,desc:'Biometric attention detection. $11M raised.',cap:'Detects engagement states, not cognition. No disclosed customers. Privacy concerns around webcam surveillance.'},
+  {name:'Squirrel AI',tier:1,x:48,y:62,r:16,desc:'30K+ knowledge points. 24M students. 3,000 centers.',cap:'Models the subject at extreme granularity. Does not model the learner beyond correct/incorrect. Vertically integrated tutoring operation.'},
+  {name:'Sana Labs (Workday)',tier:1,x:35,y:78,r:18,desc:'AI-native LMS. $52M revenue. Acquired $1.1B.',cap:'Now employer-controlled inside Workday HCM. Profile not portable. Documentation-dependent AI tutor.'},
+  {name:'Duolingo',tier:2,x:28,y:88,r:22,desc:'$1.04B revenue. 135M MAU. 52.7M DAU.',cap:'Spaced repetition + gamification. No learner model beyond performance. Expanding into chess, math, music.'},
+  {name:'Khan Academy',tier:2,x:30,y:75,r:17,desc:'Khanmigo: 700K students. 170M registered.',cap:'Session-local personalization only. No persistent learner model. Nonprofit, Microsoft-subsidized.'},
+  {name:'Carnegie Learning',tier:2,x:42,y:48,r:14,desc:'Cognitive science roots. MATHia + LiveHint AI. ~$290M rev.',cap:'Science informs curriculum design, not real-time learner modeling. K\u201312 institutional only.'},
+  {name:'Coursera',tier:2,x:20,y:72,r:16,desc:'$757M revenue. 191M learners. Merging with Udemy.',cap:'Content routing only. Cannot restructure content. GAAP unprofitable. Defensive consolidation.'},
+  {name:'Degreed',tier:2,x:22,y:52,r:13,desc:'Skills passport. 1/3 of Fortune 50. ~$100M rev.',cap:'Aggregates third-party content. MCP Server = nascent interoperability step.'},
+  {name:'Gradescope (Turnitin)',tier:2,x:12,y:55,r:11,desc:'AI grading. Half of Ivy League. 16K institutions.',cap:'Instructor tool only. No learner interaction or adaptation.'},
+  {name:'Century Tech',tier:2,x:32,y:30,r:10,desc:'UK adaptive K\u201312. 1M students, 45+ countries.',cap:'UK curriculum focused. \u00A322M raised, claims sustainability. No cross-domain pathway.'},
+  {name:'Quizlet',tier:3,x:18,y:45,r:12,desc:'Discontinued Q-Chat. Cut 45% of workforce.',cap:'Strategic retreat from AI. Recall tool only. LLM cost structure unsustainable.'},
+  {name:'Ello',tier:3,x:40,y:18,r:9,desc:'Child speech AI. K\u20133 reading. 130K hrs speech data.',cap:'Proprietary child speech recognition. Single skill, single age range (4\u20138).'},
+  {name:'Synthesis',tier:3,x:36,y:22,r:9,desc:'AI math, ages 5\u201314. Oklahoma statewide pilot.',cap:'Group + individual math. SpaceX/Ad Astra origin. ~$10.7M revenue.'},
+  {name:'Photomath (Google)',tier:3,x:8,y:58,r:10,desc:'300M+ downloads. Being absorbed into Google.',cap:'Static solution paths. Standalone relevance declining as tech merges into Lens/Gemini.'},
+  {name:'Cognii',tier:3,x:25,y:5,r:6,desc:'NLP assessment. ~1 employee. NSF-funded.',cap:'Research prototype. Core tech commoditized by general-purpose LLMs.'},
+  {name:'Knewton (Wiley)',tier:3,x:15,y:32,r:9,desc:'Raised $180M. Sold to Wiley for ~$17M.',cap:'Cautionary archetype: promised "robot tutor in the sky," now a confined product line.'},
+  {name:'Querium',tier:3,x:30,y:8,r:6,desc:'No funding since 2017. Pivoting to AI consulting.',cap:'Sound pedagogy. No commercial scale. Stagnant.'},
+  {name:'Merlyn Mind',tier:3,x:15,y:15,r:7,desc:'Teacher assistant. No funding since 2021.',cap:'Teacher-facing only. No learner modeling. Adoption metrics undisclosed.'},
+];
+
+let s = '';
+
+for(let i=1;i<5;i++){
+  const gx=pad.l+(pw*i/5);
+  const gy=pad.t+(ph*i/5);
+  s+=`<line x1="${gx}" y1="${pad.t}" x2="${gx}" y2="${pad.t+ph}" stroke="${bdc}" stroke-width="0.5" stroke-dasharray="2,3"/>`;
+  s+=`<line x1="${pad.l}" y1="${gy}" x2="${pad.l+pw}" y2="${gy}" stroke="${bdc}" stroke-width="0.5" stroke-dasharray="2,3"/>`;
+}
+
+s+=`<line x1="${pad.l}" y1="${pad.t+ph}" x2="${pad.l+pw}" y2="${pad.t+ph}" stroke="${txc}" stroke-width="0.75"/>`;
+s+=`<line x1="${pad.l}" y1="${pad.t}" x2="${pad.l}" y2="${pad.t+ph}" stroke="${txc}" stroke-width="0.75"/>`;
+
+s+=`<text x="${pad.l+pw/2}" y="${H-6}" text-anchor="middle" font-size="12" font-weight="500" fill="${txc}">Depth of learner modeling</text>`;
+s+=`<text x="${pad.l+pw*0.08}" y="${H-24}" text-anchor="start" font-size="10" fill="${tx3}">Mastery state only</text>`;
+s+=`<text x="${pad.l+pw*0.92}" y="${H-24}" text-anchor="end" font-size="10" fill="${tx3}">Cognitive / behavioral</text>`;
+s+=`<polygon points="${pad.l+pw-4},${pad.t+ph-4} ${pad.l+pw+6},${pad.t+ph} ${pad.l+pw-4},${pad.t+ph+4}" fill="${txc}"/>`;
+
+s+=`<text x="16" y="${pad.t+ph/2}" text-anchor="middle" font-size="12" font-weight="500" fill="${txc}" transform="rotate(-90,16,${pad.t+ph/2})">Commercial scale & market reach</text>`;
+s+=`<text x="38" y="${pad.t+ph*0.88}" text-anchor="middle" font-size="10" fill="${tx3}" transform="rotate(-90,38,${pad.t+ph*0.88})">Niche / single-domain</text>`;
+s+=`<text x="38" y="${pad.t+ph*0.12}" text-anchor="middle" font-size="10" fill="${tx3}" transform="rotate(-90,38,${pad.t+ph*0.12})">Global / multi-segment</text>`;
+s+=`<polygon points="${pad.l-4},${pad.t+4} ${pad.l},${pad.t-6} ${pad.l+4},${pad.t+4}" fill="${txc}"/>`;
+
+const wsX=pad.l+pw*0.56;
+const wsY=pad.t+ph*0.08;
+const wsW=pw*0.40;
+const wsH=ph*0.44;
+s+=`<rect x="${wsX}" y="${wsY}" width="${wsW}" height="${wsH}" rx="10" fill="${wsbg}" stroke="${wsc}" stroke-width="1.5" stroke-dasharray="7,5"/>`;
+s+=`<text x="${wsX+wsW/2}" y="${wsY+22}" text-anchor="middle" font-size="10" font-weight="600" fill="${wsc}" letter-spacing="0.5" text-transform="uppercase">Unoccupied territory</text>`;
+s+=`<text x="${wsX+wsW/2}" y="${wsY+38}" text-anchor="middle" font-size="10" fill="${wsc}" opacity="0.7">Deep learner modeling + commercial scale</text>`;
+
+data.forEach((d,i)=>{
+  const cx=pad.l+(d.x/100)*pw;
+  const cy=pad.t+ph-(d.y/100)*ph;
+  const col=tierC[d.tier];
+  const op=d.tier===3?0.6:0.8;
+  s+=`<circle cx="${cx}" cy="${cy}" r="${d.r}" fill="${col}" opacity="${op}" stroke="${isDk?'rgba(255,255,255,0.12)':'rgba(0,0,0,0.08)'}" stroke-width="0.5" data-i="${i}" style="cursor:pointer;transition:opacity 0.1s,r 0.15s"/>`;
+  const lines=d.name.split(/(?<=\)) |(?=\()/);
+  const nameParts = d.name.includes('(') ? [d.name.split('(')[0].trim(), '('+d.name.split('(')[1]] : [d.name];
+  const fs=d.r<8?8:d.r<11?9:10;
+  const lh=fs+2;
+  const labelY=cy+d.r+lh+3;
+  nameParts.forEach((part,li)=>{
+    s+=`<text x="${cx}" y="${labelY+li*lh}" text-anchor="middle" font-size="${li===0?fs:fs-1}" font-weight="${li===0?'500':'400'}" fill="${li===0?txc:tx3}" style="pointer-events:none">${part}</text>`;
+  });
+});
+
+svg.innerHTML = s;
+
+svg.querySelectorAll('circle').forEach(el=>{
+  el.addEventListener('mouseenter',e=>{
+    const d=data[+el.dataset.i];
+    el.setAttribute('opacity','1');
+    el.setAttribute('r', parseFloat(el.getAttribute('r'))*1.15);
+    tip.innerHTML=`<div class="t-tier">${tierNames[d.tier]}</div><div class="t-name">${d.name}</div><div class="t-desc">${d.desc}</div><div class="t-cap">${d.cap}</div>`;
+    tip.style.opacity='1';
+    const svgRect=svg.getBoundingClientRect();
+    const wrapRect=wrap.getBoundingClientRect();
+    const cx=parseFloat(el.getAttribute('cx'));
+    const cy=parseFloat(el.getAttribute('cy'));
+    const sx=svgRect.width/820;
+    const sy=svgRect.height/540;
+    let left=(cx*sx)+(svgRect.left-wrapRect.left)+18;
+    let top=(cy*sy)-30;
+    if(left+280>wrapRect.width) left=(cx*sx)+(svgRect.left-wrapRect.left)-290;
+    if(top<0) top=10;
+    tip.style.left=left+'px';
+    tip.style.top=top+'px';
+  });
+  el.addEventListener('mouseleave',()=>{
+    const d=data[+el.dataset.i];
+    el.setAttribute('opacity',d.tier===3?'0.6':'0.8');
+    el.setAttribute('r',d.r);
+    tip.style.opacity='0';
+  });
+});
+</script>
+</body>
+</html>
